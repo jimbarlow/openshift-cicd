@@ -1,0 +1,27 @@
+# Example ssh.cfg for jumphost
+# Change User and IdentityFile(s) as necessary
+
+
+# Host workstation*
+#   Hostname workstation-92b2.rhpds.opentlc.com
+#   User cloud-user
+#   IdentityFile ~/.ssh/openstack.pem
+#   ForwardAgent yes
+#   StrictHostKeyChecking no
+#   PasswordAuthentication no
+# 
+# Host bastion
+#   Hostname bastion.d70a.example.opentlc.com
+#   User jbarlow-redhat.com
+#   IdentityFile ~/.ssh/id_rsa
+#   ForwardAgent yes
+#   StrictHostKeyChecking no
+#   PasswordAuthentication no
+# 
+# Host 10.10.10.*
+#   User cloud-user
+#   IdentityFile ~/.ssh/openstack.pem
+#   # ProxyCommand ssh -F ./ssh.cfg workstation-92b2.rhpds.opentlc.com -W %h:%p
+#   ProxyCommand ssh workstation-92b2.rhpds.opentlc.com -W %h:%p
+#   StrictHostKeyChecking no
+# 

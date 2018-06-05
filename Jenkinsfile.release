@@ -1,0 +1,44 @@
+def releaseTag
+
+pipeline {
+  agent {
+      label 'maven'
+  }
+  stages {
+    stage('Prepare') {
+      steps {
+        git url: 'http://gogs-lab-infra.devapps-GUID.generic.opentlc.com/student/catalog-spring-boot.git'
+        sh "git config --local user.email 'jenkins@cicd.com'"
+        sh "git config --local user.name 'jenkins'"
+
+        script {
+          releaseTag = readMavenPom().getVersion().replace("-SNAPSHOT", "")
+        }
+      }
+    }
+    stage('Release Code') {
+      environment {
+        SCM_GIT_URL = sh(returnStdout: true, script: 'git config remote.origin.url').trim()
+      }
+      steps {
+        script {
+          openshift.withCluster() {
+            withCredentials([usernamePassword(credentialsId: "${openshift.project()}-gogs-credentials", usernameVariable: "GOGS_USERNAME", passwordVariable: "GOGS_PASSWORD")]) {
+              sh "mvn --batch-mode release:clean release:prepare release:perform -s .settings.xml"
+            }
+          }
+        }
+      }
+    }
+    stage('Release Image') {
+      steps {
+        script {
+          openshift.withCluster() {
+            echo "Releasing catalog image version ${releaseTag}"
+            openshift.tag("${openshift.project()}/catalog:latest", "${openshift.project()}/catalog:${releaseTag}")
+          }
+        }
+      }
+    }
+  }
+}

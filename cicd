@@ -1,0 +1,41 @@
+
+
+oc new-app -f https://raw.githubusercontent.com/openshift-labs/devops-oab-labs/master/openshift/catalog-template.yaml --param=GIT_URI=http://gogs-lab-infra.devapps-8e59.generic.opentlc.com/student/catalog-spring-boot.git
+
+Check out image streams
+
+Hit the web UI
+
+Install Jenkins UI OR...
+oc new-app jenkins-persistent -n cicd
+
+git clone http://student:openshift@gogs-lab-infra.devapps-8e59.generic.opentlc.com/student/cd-infra.git
+
+cd cd-infra
+
+cp ../Jenkinsfile.catalog-build .
+
+git add Jenkinsfile.catalog-build
+git config --global user.email "student@gogs.com"
+git config --global user.name "student"
+git commit -m "build pipeline added"
+git push origin master
+
+import into cicd ../pipelines.yml
+
+show pipeline excution
+
+# Webhooks
+
+get the payload from OpenShift and put it into Gogs
+
+# 
+
+Import ../Jenkinsfile.release into cicd and push
+
+setup secrets
+oc create secret generic gogs-credentials --from-literal=username=student --from-literal=password=openshift
+oc label secret gogs-credentials credential.sync.jenkins.openshift.io=true
+
+# import the following into CICD project
+release.pipelin.yml

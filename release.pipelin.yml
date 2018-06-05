@@ -1,0 +1,20 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: catalog-release
+spec:
+  runPolicy: Serial
+  source:
+    git:
+      ref: master
+      uri: "http://gogs-lab-infra.devapps-8e59.generic.opentlc.com/student/cd-infra.git"
+    type: Git
+  strategy:
+    jenkinsPipelineStrategy:
+      env:
+        - name: NEXUS_URL
+          value: "http://nexus.lab-infra.svc:8081"
+        - name: STAGE_PROJECT
+          value: "stage"
+      jenkinsfilePath: Jenkinsfile.release
+    type: JenkinsPipeline
